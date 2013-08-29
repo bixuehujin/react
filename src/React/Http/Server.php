@@ -17,11 +17,15 @@ class Server extends EventEmitter implements ServerInterface
 
         $server = $this;
 
-        $this->io->on('connection', function ($conn) use ($server) {
+        $this->io->on('connection', function ($conn, $loop) use ($server) {
             // TODO: http 1.1 keep-alive
             // TODO: chunked transfer encoding (also for outgoing data)
             // TODO: multipart parsing
 
+        	$timer = $loop->addTimer(10, function ($timer) use ($conn) {
+        		$conn->end();
+        	});
+        	
             $parser = new RequestHeaderParser();
             $parser->on('headers', function (Request $request, $bodyBuffer) use ($server, $conn, $parser) {
                 $server->handleRequest($conn, $request, $bodyBuffer);

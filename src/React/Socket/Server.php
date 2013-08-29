@@ -49,7 +49,7 @@ class Server extends EventEmitter implements ServerInterface
 
         $client = $this->createConnection($socket);
 
-        $this->emit('connection', array($client));
+        $this->emit('connection', array($client, $this->loop));
     }
 
     public function getPort()
